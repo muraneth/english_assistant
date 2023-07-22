@@ -91,6 +91,6 @@ export class ChatGPTClient {
 
         // return result[GPT_TOKEN_NAME];
 
-        return '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';
+        return 'sk-';
     }
 }
