@@ -1,24 +1,19 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
 
 function App() {
+  function setting() {
+    let internalUrl = chrome.runtime.getURL("assets/settings.html");
+    chrome.tabs.create({ url: internalUrl });
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <a href="/setting" onClick={() => window.open("/setting", "_blank")}>
+        New Page
+      </a>
+      Hello World
+      <button onClick={setting}>setting </button>
     </div>
   );
 }
