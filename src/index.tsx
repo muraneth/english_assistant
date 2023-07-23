@@ -19,21 +19,19 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-    {/* <RouterProvider router={router} /> */}
-  </React.StrictMode>
-);
-
-// const root = document.createElement("div");
-// root.className = "container";
-// document.body.appendChild(root);
-// const rootDiv = ReactDOM.createRoot(root);
-// rootDiv.render(
-//   // <RouterProvider router={router} />
+// createRoot(document.getElementById("root")!).render(
 //   <React.StrictMode>
-//     {/* <App /> */}
-//     <RouterProvider router={router} />
+//     <App />
+//     {/* <RouterProvider router={router} /> */}
 //   </React.StrictMode>
 // );
+
+const root = document.createElement("div");
+root.className = "container";
+document.body.appendChild(root);
+const rootDiv = ReactDOM.createRoot(root);
+rootDiv.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);

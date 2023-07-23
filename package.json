@@ -12,6 +12,7 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/styled-components": "^5.1.26",
+    "chrome": "^0.1.0",
     "db3.js": "^0.3.17",
     "js-loader": "^0.1.1",
     "openai": "^3.3.0",

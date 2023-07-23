@@ -6,7 +6,8 @@ module.exports = {
   entry: {
     index: "./src/index.tsx",
     background: "./src/background.tsx",
-    // setting: "./src/settings/settings.tsx",
+    settings: "./src/settings/settings.tsx",
+    // newtab: "./src/newtab/Newtab.tsx",
   },
   mode: "production",
   module: {
@@ -37,11 +38,18 @@ module.exports = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [
-        { from: "manifest.json", to: "../manifest.json" },
-        // { from: "src/assets/*", to: "../../*" },
-      ],
+      patterns: [{ from: "manifest.json", to: "../manifest.json" }],
     }),
+    // new HTMLPlugin({
+    //   filename: "index.html",
+    //   // template: "src/index.html",
+    //   chunks: ["main"],
+    // }),
+    // new HTMLPlugin({
+    //   filename: "newtab.html",
+    //   // template: "new/newtab.html",
+    //   chunks: ["newtab"],
+    // }),
     ...getHtmlPlugins(["index"]),
   ],
   resolve: {

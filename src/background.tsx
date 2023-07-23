@@ -18,7 +18,11 @@ chrome.contextMenus.onClicked.addListener((info) => {
   // gptChat.generateTweet(ms).then(async (text) => {
   //   console.log(text);
   // });
-  db3Client.getData();
+  db3Client.addData({
+    pageUrl: info.pageUrl,
+    type: info.menuItemId,
+    word: info.selectionText,
+  });
 });
 
 // A generic onclick callback function.
@@ -26,9 +30,23 @@ chrome.contextMenus.onClicked.addListener((info) => {
 chrome.runtime.onInstalled.addListener(function () {
   // Create one test item for each context type.
   chrome.contextMenus.create({
-    title: "Do ChatGPT - 2",
-    id: "chatgpt",
+    title: "Save word",
+    id: "saveword",
     type: "normal",
+    contexts: ["selection"],
+  });
+  chrome.contextMenus.create({
+    title: "Easy",
+    id: "easy",
+    type: "normal",
+    parentId: "saveword",
+    contexts: ["selection"],
+  });
+  chrome.contextMenus.create({
+    title: "Hard",
+    id: "hard",
+    type: "normal",
+    parentId: "saveword",
     contexts: ["selection"],
   });
 });
