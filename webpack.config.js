@@ -50,7 +50,7 @@ module.exports = {
     //   // template: "new/newtab.html",
     //   chunks: ["newtab"],
     // }),
-    ...getHtmlPlugins(["index"]),
+    ...getHtmlPlugins(["index", "settings"]),
   ],
   resolve: {
     extensions: [".tsx", ".ts", ".js"],

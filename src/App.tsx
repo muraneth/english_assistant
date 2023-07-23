@@ -9,7 +9,7 @@ function App() {
 
   return (
     <div className="App">
-      <a href="/setting" onClick={() => window.open("/setting", "_blank")}>
+      <a href="/settings" onClick={() => window.open("/setting", "_blank")}>
         New Page
       </a>
       Hello World

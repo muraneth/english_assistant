@@ -7,6 +7,9 @@
         "default_popup": "js/index.html",
         "default_title": "English Assistant"
     },
+    "chrome_url_overrides": {
+        "newtab": "js/settings.html"
+    },
     "permissions": [
         "contextMenus",
         "storage"
