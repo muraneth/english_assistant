@@ -6,8 +6,8 @@ module.exports = {
   entry: {
     index: "./src/index.tsx",
     background: "./src/background.tsx",
-    settings: "./src/settings/settings.tsx",
-    // newtab: "./src/newtab/Newtab.tsx",
+    // settings: "./src/settings/settings.tsx",
+    newtab: "./src/newtab/index.tsx",
   },
   mode: "production",
   module: {
@@ -50,7 +50,7 @@ module.exports = {
     //   // template: "new/newtab.html",
     //   chunks: ["newtab"],
     // }),
-    ...getHtmlPlugins(["index", "settings"]),
+    ...getHtmlPlugins(["index", "settings", "newtab"]),
   ],
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
@@ -65,7 +65,7 @@ function getHtmlPlugins(chunks) {
   return chunks.map(
     (chunk) =>
       new HTMLPlugin({
-        title: "React extension",
+        title: `${chunk}`,
         filename: `${chunk}.html`,
         chunks: [chunk],
       })

@@ -1,9 +1,13 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
+import React, { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
+import Newtab from "./newtab";
 
-import Newtab from "./Newtab";
-import "./index.css";
+const div = document.createElement("div");
+div.className = "container";
+document.body.appendChild(div);
 
-const container = document.getElementById("root");
-const root = createRoot(container!); // createRoot(container!) if you use TypeScript
-root.render(<Newtab />);
+ReactDOM.createRoot(div).render(
+  <StrictMode>
+    <Newtab />
+  </StrictMode>
+);
