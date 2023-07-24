@@ -28,10 +28,12 @@ const Newtab = () => {
       <img src={logo} />
       <h1>{records.length}</h1>
 
-      {records &&
-        records.map((e) => (
-          <Record record={e} updateFunc={() => updateData("1", e)} />
-        ))}
+      {records.length > 0 && (
+        <Record
+          record={records[0]}
+          updateFunc={() => updateData("1", records[0])}
+        />
+      )}
     </div>
   );
 };

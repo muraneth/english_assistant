@@ -50,6 +50,8 @@ export class ChatGPTClient {
 
         const re = JSON.parse(completion.data.choices[0].message?.content!) as GPTExplaination;
         const url = await this.generatePic(re.pic_prompt, token)
+        console.log("gpt done");
+
         return { ...re, pic_url: url }
 
     }

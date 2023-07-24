@@ -26,32 +26,34 @@ chrome.contextMenus.onClicked.addListener((info) => {
 
 // A generic onclick callback function.
 // function genericOnClick(info) {}
-chrome.runtime.onInstalled.addListener(function () {
+chrome.runtime.onInstalled.addListener(async function () {
   // Create one test item for each context type.
+  const eak = await chrome.storage.local.get(["English_Assistant_Key"]);
+  if (!eak.English_Assistant_Key.privateKey) {
+    console.log("init account");
 
-  const acc = coll.initAccount();
+    const acc = coll.initAccount();
+    chrome.storage.local.set({ English_Assistant_Key: acc });
+  }
 
-  chrome.storage.local.set({ English_Assistant_Key: acc }).then(() => {
-    console.log("Value is set");
-    chrome.contextMenus.create({
-      title: "Save word",
-      id: "saveword",
-      type: "normal",
-      contexts: ["selection"],
-    });
-    // chrome.contextMenus.create({
-    //   title: "Easy",
-    //   id: "easy",
-    //   type: "normal",
-    //   parentId: "saveword",
-    //   contexts: ["selection"],
-    // });
-    // chrome.contextMenus.create({
-    //   title: "Hard",
-    //   id: "hard",
-    //   type: "normal",
-    //   parentId: "saveword",
-    //   contexts: ["selection"],
-    // });
+  chrome.contextMenus.create({
+    title: "Save word",
+    id: "saveword",
+    type: "normal",
+    contexts: ["selection"],
   });
+  // chrome.contextMenus.create({
+  //   title: "Easy",
+  //   id: "easy",
+  //   type: "normal",
+  //   parentId: "saveword",
+  //   contexts: ["selection"],
+  // });
+  // chrome.contextMenus.create({
+  //   title: "Hard",
+  //   id: "hard",
+  //   type: "normal",
+  //   parentId: "saveword",
+  //   contexts: ["selection"],
+  // });
 });
