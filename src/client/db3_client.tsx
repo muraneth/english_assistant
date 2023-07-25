@@ -25,9 +25,23 @@ export class DB3Client {
       await updateDoc(collection, id, doc);
     }
   }
-  async getData(): Promise<Array<DocumentData>> {
-    let collection = await coll.getTheCollection();
 
+  async getData(): Promise<Array<DocumentData> | undefined> {
+    const words_cached = await chrome.storage.local.get(["words_cached"]);
+
+    if (!words_cached.words_cached) {
+      console.log("no words_cached");
+
+      return await this.getDataFromRemote();
+    } else {
+      console.log(" => words_cached", words_cached);
+      this.getDataFromRemote();
+      return words_cached.words_cached;
+    }
+  }
+
+  async getDataFromRemote(): Promise<Array<DocumentData> | undefined> {
+    let collection = await coll.getTheCollection();
     if (collection) {
       const eak = await chrome.storage.local.get(["English_Assistant_Key"]);
 
@@ -35,11 +49,14 @@ export class DB3Client {
       console.log("query=>", query);
 
       const result = await queryDoc(collection, query);
-      return result.docs.map((element) => {
+      let re = result.docs.map((element) => {
         return element.doc!;
       });
-    } else {
-      return [];
+
+      chrome.storage.local.set({ words_cached: re }).then(() => {
+        console.log("words_cached is set", re);
+      });
+      return re;
     }
   }
 }

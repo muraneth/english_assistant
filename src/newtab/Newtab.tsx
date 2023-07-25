@@ -3,18 +3,18 @@ import logo from "../assets/icons/32.png";
 import { DB3Client } from "../client/db3_client";
 import { useEffect, useState } from "react";
 import "./newtab.css";
-import Word from "./record";
 import Record from "./record";
 
 const Newtab = () => {
   const [records, setRecords] = useState(Array<DocumentData>);
+  const [num, setNum] = useState(0);
 
   const db3Client = new DB3Client();
 
   useEffect(() => {
     async function loadData() {
       const re = await db3Client.getData();
-      setRecords(re);
+      setRecords(re!);
     }
     loadData();
   }, []);
@@ -25,15 +25,21 @@ const Newtab = () => {
 
   return (
     <div>
-      <img src={logo} />
-      <h1>{records.length}</h1>
+      {/* <img src={logo} /> */}
 
-      {records.length > 0 && (
+      {records.length > num && (
         <Record
-          record={records[0]}
-          updateFunc={() => updateData("1", records[0])}
+          record={records[num]}
+          updateFunc={() => updateData("1", records[num])}
         />
       )}
+      <button
+        onClick={() => {
+          setNum((n) => n + 1);
+        }}
+      >
+        Next
+      </button>
     </div>
   );
 };

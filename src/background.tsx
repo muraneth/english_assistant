@@ -8,19 +8,22 @@ const db3Client = new DB3Client();
 
 const coll = new InitCollection();
 
-chrome.contextMenus.onClicked.addListener((info) => {
+chrome.contextMenus.onClicked.addListener(async (info) => {
   console.log("2=>", info);
   var word = info.selectionText;
+  const result = await chrome.storage.local.get("interestedArea");
 
   if (word && word.length > 0) {
-    gptChat.askGPT({ word: word }).then((re) => {
-      db3Client.addData({
-        pageUrl: info.pageUrl,
-        type: info.menuItemId,
-        word: info.selectionText,
-        gpt: re,
+    gptChat
+      .askGPT({ word: word, interestedArea: result["interestedArea"] })
+      .then((re) => {
+        db3Client.addData({
+          pageUrl: info.pageUrl,
+          type: info.menuItemId,
+          word: info.selectionText,
+          gpt: re,
+        });
       });
-    });
   }
 });
 
