@@ -8,7 +8,7 @@ import {
   createDocumentDatabase,
 } from "db3.js";
 
-import { Collection } from "db3.js/dist/store/types";
+import { Collection, Database } from "db3.js/dist/store/types";
 
 const STORAGE_NODE_URL = "https://rollup.cloud.db3.network";
 const INDEX_NODE_URL = "https://index.cloud.db3.network";
@@ -42,25 +42,25 @@ export class InitCollection {
     console.log("account=>", account);
     let clientIns = createClient(STORAGE_NODE_URL, INDEX_NODE_URL, account);
 
-    let col = await getCollection(databaseAddr, collectionName, clientIns);
+    // let col = await getCollection(databaseAddr, collectionName, clientIns);
     await syncAccountNonce(clientIns);
-    // const { db, result } = await createDocumentDatabase(
-    //   clientIns,
-    //   "Personal db"
-    // );
-    // console.log("database=>", db);
+    const { db, result } = await createDocumentDatabase(
+      clientIns,
+      "Personal db english assistant"
+    );
+    console.log("database=>", db);
 
-    // let col = await createCollection(
-    //   db,
-    //   "collection-" + pk.English_Assistant_Key.address
-    // );
-    // console.log("col=>", col);
+    let col = await createCollection(
+      db,
+      "collection-" + eak.English_Assistant_Key.address
+    );
+    console.log("col=>", col);
 
     // chrome.storage.local.set({ collectionCache: col }).then(() => {
     //   console.log("collection is set");
     // });
 
-    return col;
+    return col.collection;
   }
 
   initAccount(): Mywallet {

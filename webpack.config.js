@@ -6,7 +6,7 @@ module.exports = {
   entry: {
     index: "./src/index.tsx",
     background: "./src/background.tsx",
-    // settings: "./src/settings/settings.tsx",
+    setting: "./src/setting/index.tsx",
     newtab: "./src/newtab/index.tsx",
   },
   mode: "production",
@@ -50,7 +50,7 @@ module.exports = {
     //   // template: "new/newtab.html",
     //   chunks: ["newtab"],
     // }),
-    ...getHtmlPlugins(["index", "settings", "newtab"]),
+    ...getHtmlPlugins(["index", "setting", "newtab"]),
   ],
   resolve: {
     extensions: [".tsx", ".ts", ".js"],

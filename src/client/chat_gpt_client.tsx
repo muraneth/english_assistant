@@ -46,7 +46,7 @@ export class ChatGPTClient {
     1.one example sentence better related to the area of ${props.interestedArea}  and 2.draw me a picture (prompt to generate the picture)  and  3.a brief explain about the word and 4.some similar words. Here is the word:${props.word}. 
      Please return your answer in json with 4 keys [sentence , pic_prompt, explanation,similar_words]`;
     const msg2 = `You are excellent English teacher, every time I ask you about a new word or phrase, you can alway give me 
-     1.one example sentence and 2.draw me a picture (prompt to generate the picture)  and  3.a brief explain about the word and 4.some similar words. Here is the word:${props.word}. 
+     1.one example sentence and 2.generate a picture (or prompt to generate the picture) to describe the word and 3.a brief explain about the word and 4.some similar words. Here is the word:${props.word}. 
       Please return your answer in json with 4 keys [sentence , pic_prompt, explanation,similar_words]`;
 
     const systemMessage = this.randomMessage(props.interestedArea, msg1, msg2);

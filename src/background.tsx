@@ -31,13 +31,6 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
 // function genericOnClick(info) {}
 chrome.runtime.onInstalled.addListener(async function () {
   // Create one test item for each context type.
-  const eak = await chrome.storage.local.get(["English_Assistant_Key"]);
-  if (!eak.English_Assistant_Key.privateKey) {
-    console.log("init account");
-
-    const acc = coll.initAccount();
-    chrome.storage.local.set({ English_Assistant_Key: acc });
-  }
 
   chrome.contextMenus.create({
     title: "Save word",
@@ -45,6 +38,12 @@ chrome.runtime.onInstalled.addListener(async function () {
     type: "normal",
     contexts: ["selection"],
   });
+  const eak = await chrome.storage.local.get(["PicWords_Account"]);
+
+  if (!eak.PicWords_Account) {
+    let internalUrl = chrome.runtime.getURL("js/setting.html");
+    chrome.tabs.create({ url: internalUrl });
+  }
   // chrome.contextMenus.create({
   //   title: "Easy",
   //   id: "easy",
