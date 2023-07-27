@@ -42,7 +42,6 @@ export class InitCollection {
     console.log("account=>", account);
     let clientIns = createClient(STORAGE_NODE_URL, INDEX_NODE_URL, account);
 
-    const database = await getDatabase(databaseAddr, clientIns);
     let col = await getCollection(databaseAddr, collectionName, clientIns);
     await syncAccountNonce(clientIns);
     // const { db, result } = await createDocumentDatabase(
