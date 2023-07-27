@@ -1,6 +1,6 @@
 import { DocumentData } from "db3.js/dist/client/base";
 import logo from "../assets/icons/32.png";
-import { DB3Client } from "../client/db3_client";
+import { DB3Interface } from "../client/db3_interface";
 import { useEffect, useState } from "react";
 import "./newtab.css";
 import Record from "./record";
@@ -9,10 +9,11 @@ const Newtab = () => {
   const [records, setRecords] = useState(Array<DocumentData>);
   const [num, setNum] = useState(0);
 
-  const db3Client = new DB3Client();
+  const db3Client = new DB3Interface();
 
   useEffect(() => {
     async function loadData() {
+      await db3Client.init();
       const re = await db3Client.getData();
       setRecords(re!);
     }

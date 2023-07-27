@@ -1,7 +1,6 @@
 import { Configuration, OpenAIApi } from "openai";
 import fetchAdapter from "@vespaiach/axios-fetch-adapter";
-
-const GPT_TOKEN_NAME = "openAIToken";
+import { DRAWORDS_OPENAI_KEY, OpenAiKey } from "../setting/setting";
 
 export type WordProps = {
   word: string;
@@ -37,9 +36,9 @@ export class ChatGPTClient {
     return msg2;
   }
   async askGPT(props: WordProps): Promise<GPTResponse | undefined> {
-    const token = await this.getToken();
+    const openAiKey = await this.getOpenAiKey();
 
-    if (!token) {
+    if (!openAiKey) {
       return Promise.reject();
     }
     const msg1 = `You are excellent English teacher, every time I ask you about a new word or phrase, you can alway give me 
@@ -54,7 +53,7 @@ export class ChatGPTClient {
     console.log(systemMessage);
 
     const configuration = new Configuration({
-      apiKey: token,
+      apiKey: openAiKey.openAIToken,
       baseOptions: {
         adapter: fetchAdapter,
       },
@@ -69,7 +68,7 @@ export class ChatGPTClient {
     console.log("gpt step1", ct);
 
     const re = JSON.parse(ct!) as GPTExplaination;
-    const url = await this.generatePic(re.pic_prompt, token);
+    const url = await this.generatePic(re.pic_prompt, openAiKey.openAIToken);
     console.log("gpt done", url);
     const img64 = await this.convert(url!);
 
@@ -95,15 +94,15 @@ export class ChatGPTClient {
     return response.data.data[0].url;
   }
 
-  async getToken(): Promise<string | undefined> {
-    const result = await chrome.storage.local.get(GPT_TOKEN_NAME);
+  async getOpenAiKey(): Promise<OpenAiKey | undefined> {
+    const result = await chrome.storage.local.get(DRAWORDS_OPENAI_KEY);
 
-    if (!result[GPT_TOKEN_NAME]) {
-      let internalUrl = chrome.runtime.getURL("js/index.html");
+    if (!result[DRAWORDS_OPENAI_KEY]) {
+      let internalUrl = chrome.runtime.getURL("js/setting.html");
       chrome.tabs.create({ url: internalUrl });
     }
 
-    return result[GPT_TOKEN_NAME];
+    return result[DRAWORDS_OPENAI_KEY];
   }
 
   async convert(url: string): Promise<any> {

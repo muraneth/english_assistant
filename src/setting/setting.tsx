@@ -3,6 +3,14 @@ import logoPath from "../assets/icons/16.png";
 import { useCallback, useEffect, useState } from "react";
 
 import { Stack, Button, TextField } from "@mui/material";
+import { getLocalAccount } from "../client/account";
+import { type } from "os";
+export const DRAWORDS_OPENAI_KEY = "drawords_openai_key";
+
+export type OpenAiKey = {
+  openAIToken: string;
+  interestedArea: string;
+};
 
 export const Setting = () => {
   const [openAIToken, setOpenAIToken] = useState("");
@@ -14,8 +22,7 @@ export const Setting = () => {
       drawords_key: {
         openAIToken: openAIToken,
         interestedArea: interestedArea,
-        privateKey: privateKey,
-      },
+      } as OpenAiKey,
     });
   };
 
@@ -31,8 +38,8 @@ export const Setting = () => {
   }, []);
 
   useEffect(() => {
-    chrome.storage.local.get(["drawords_key"]).then((state) => {
-      const dk = state["drawords_key"];
+    chrome.storage.local.get([DRAWORDS_OPENAI_KEY]).then((state) => {
+      const dk = state[DRAWORDS_OPENAI_KEY];
       if (dk.interestedArea) {
         setInterestedArea(dk.interestedArea);
       }
@@ -41,6 +48,10 @@ export const Setting = () => {
       }
       if (dk.privateKey) {
         setPrivatekey(dk.privateKey);
+      } else {
+        getLocalAccount().then((ac) => {
+          setPrivatekey(ac!.privateKey);
+        });
       }
     });
   }, []);

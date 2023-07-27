@@ -1,62 +1,74 @@
-import { addDoc, queryDoc, updateDoc, deleteDoc } from "db3.js";
-import { Collection } from "db3.js/dist/store/types";
-import { useMemo } from "react";
-import { InitCollection } from "./db3_collection";
-import { DocumentData } from "db3.js/dist/client/base";
+import {
+  createClient,
+  createFromPrivateKey,
+  syncAccountNonce,
+  getCollection,
+  createCollection,
+  getDatabase,
+  createDocumentDatabase,
+  DB3Account,
+  Client,
+} from "db3.js";
 
-const coll = new InitCollection();
+import { Collection, Database } from "db3.js/dist/store/types";
+import { getLocalAccount } from "./account";
+
+const STORAGE_NODE_URL = "https://rollup.cloud.db3.network";
+const INDEX_NODE_URL = "https://index.cloud.db3.network";
+
+const DB_DESCRIPTION = "DrawordsDB";
+
+const COLLECTION_NAME = "WordsList";
+const DB_ADDRESS = "DrawordDBAddress";
 
 export class DB3Client {
-  async addData(doc: DocumentData) {
-    let collection = await coll.getTheCollection();
+  wordListCollection: Collection | undefined;
 
-    if (collection) {
-      const eak = await chrome.storage.local.get(["English_Assistant_Key"]);
-
-      await addDoc(collection, {
-        ...doc,
-        addr: eak.English_Assistant_Key.address,
-      } as DocumentData);
-    }
-  }
-  async updateData(id: string, doc: DocumentData) {
-    let collection = await coll.getTheCollection();
-    if (collection) {
-      await updateDoc(collection, id, doc);
-    }
+  async initClient(privateKey: `0x{string}`): Promise<Client> {
+    const account = createFromPrivateKey(privateKey);
+    const clientIns = createClient(STORAGE_NODE_URL, INDEX_NODE_URL, account);
+    await syncAccountNonce(clientIns);
+    return clientIns;
   }
 
-  async getData(): Promise<Array<DocumentData> | undefined> {
-    const words_cached = await chrome.storage.local.get(["words_cached"]);
-
-    if (!words_cached.words_cached) {
-      console.log("no words_cached");
-
-      return await this.getDataFromRemote();
+  async createWordListDBAndCollection(): Promise<Collection | undefined> {
+    const localAccount = await getLocalAccount();
+    if (localAccount) {
+      const client = await this.initClient(localAccount.privateKey!);
+      const { db } = await createDocumentDatabase(client, DB_DESCRIPTION);
+      let col = await createCollection(db, COLLECTION_NAME);
+      chrome.storage.local.set({ DrawordDBAddress: db.addr });
+      return col.collection;
     } else {
-      console.log(" => words_cached", words_cached);
-      this.getDataFromRemote();
-      return words_cached.words_cached;
+      console.log("no local account");
     }
   }
 
-  async getDataFromRemote(): Promise<Array<DocumentData> | undefined> {
-    let collection = await coll.getTheCollection();
-    if (collection) {
-      const eak = await chrome.storage.local.get(["English_Assistant_Key"]);
+  async getLocalDBAddress(): Promise<string | undefined> {
+    const stg = await chrome.storage.local.get([DB_ADDRESS]);
 
-      const query = `/[addr = "${eak.English_Assistant_Key.address}"]`;
-      console.log("query=>", query);
+    return stg.DrawordDBAddress;
+  }
 
-      const result = await queryDoc(collection, query);
-      let re = result.docs.map((element) => {
-        return element.doc!;
-      });
+  async getWordListCollectionInstance(): Promise<Collection | undefined> {
+    if (!this.wordListCollection) {
+      const localAccount = await getLocalAccount();
+      const localAddress = await this.getLocalDBAddress();
+      console.log("local account ,address", localAccount, localAddress);
 
-      chrome.storage.local.set({ words_cached: re }).then(() => {
-        console.log("words_cached is set", re);
-      });
-      return re;
+      if (localAccount) {
+        const cli = await this.initClient(localAccount.privateKey!);
+
+        this.wordListCollection = await getCollection(
+          localAddress!,
+          COLLECTION_NAME,
+          cli
+        );
+        console.log("this.wordListCollection ", this.wordListCollection);
+      } else {
+        console.log("no local account");
+      }
     }
+    return this.wordListCollection;
   }
 }

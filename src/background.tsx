@@ -1,12 +1,16 @@
 import { ChatGPTClient, WordProps } from "./client/chat_gpt_client";
+import { DB3Interface } from "./client/db3_interface";
 import { DB3Client } from "./client/db3_client";
-import { InitCollection } from "./client/db3_collection";
+
+import { DRAWORDS_ACCOUNT } from "./client/account";
+
+import { initAccount } from "./client/account";
 
 const gptChat = new ChatGPTClient();
 
 const db3Client = new DB3Client();
 
-const coll = new InitCollection();
+const db3Interface = new DB3Interface();
 
 chrome.contextMenus.onClicked.addListener(async (info) => {
   console.log("2=>", info);
@@ -17,7 +21,7 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
     gptChat
       .askGPT({ word: word, interestedArea: result["interestedArea"] })
       .then((re) => {
-        db3Client.addData({
+        db3Interface.addData({
           pageUrl: info.pageUrl,
           type: info.menuItemId,
           word: info.selectionText,
@@ -38,9 +42,11 @@ chrome.runtime.onInstalled.addListener(async function () {
     type: "normal",
     contexts: ["selection"],
   });
-  const eak = await chrome.storage.local.get(["PicWords_Account"]);
+
+  const eak = await chrome.storage.local.get([DRAWORDS_ACCOUNT]);
 
   if (!eak.PicWords_Account) {
+    await initAccount();
     let internalUrl = chrome.runtime.getURL("js/setting.html");
     chrome.tabs.create({ url: internalUrl });
   }
