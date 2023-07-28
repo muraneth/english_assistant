@@ -3,8 +3,9 @@ import logoPath from "../assets/icons/16.png";
 import { useCallback, useEffect, useState } from "react";
 
 import { Stack, Button, TextField } from "@mui/material";
-import { getLocalAccount } from "../client/account";
+import { DRAWORDS_ACCOUNT, getLocalAccount } from "../client/account";
 import { type } from "os";
+import { DB3Client } from "../client/db3_client";
 export const DRAWORDS_OPENAI_KEY = "drawords_openai_key";
 
 export type OpenAiKey = {
@@ -12,18 +13,22 @@ export type OpenAiKey = {
   interestedArea: string;
 };
 
+const db3Client = new DB3Client();
+
 export const Setting = () => {
   const [openAIToken, setOpenAIToken] = useState("");
   const [interestedArea, setInterestedArea] = useState("");
   const [privateKey, setPrivatekey] = useState("");
-
+  const [accountAddr, setAccountAddr] = useState("");
   const save = async () => {
     await chrome.storage.local.set({
-      drawords_key: {
+      drawords_openai_key: {
         openAIToken: openAIToken,
         interestedArea: interestedArea,
       } as OpenAiKey,
     });
+    const cl = await db3Client.createWordListDBAndCollection();
+    console.log("after save", cl);
   };
 
   const changeOpenAIToken = useCallback((newToken: string) => {
@@ -38,22 +43,25 @@ export const Setting = () => {
   }, []);
 
   useEffect(() => {
-    chrome.storage.local.get([DRAWORDS_OPENAI_KEY]).then((state) => {
-      const dk = state[DRAWORDS_OPENAI_KEY];
-      if (dk.interestedArea) {
-        setInterestedArea(dk.interestedArea);
-      }
-      if (dk.openAIToken) {
-        setOpenAIToken(dk.openAIToken);
-      }
-      if (dk.privateKey) {
-        setPrivatekey(dk.privateKey);
-      } else {
-        getLocalAccount().then((ac) => {
-          setPrivatekey(ac!.privateKey);
-        });
-      }
-    });
+    chrome.storage.local
+      .get([DRAWORDS_OPENAI_KEY, DRAWORDS_ACCOUNT])
+      .then((state) => {
+        const dk = state[DRAWORDS_OPENAI_KEY];
+        const ac = state[DRAWORDS_ACCOUNT];
+        if (dk) {
+          setInterestedArea(dk.interestedArea);
+          setOpenAIToken(dk.openAIToken);
+        }
+        if (ac) {
+          setPrivatekey(ac.privateKey);
+          setAccountAddr(ac.address);
+        } else {
+          getLocalAccount().then((ac) => {
+            setPrivatekey(ac!.privateKey);
+            setAccountAddr(ac!.address);
+          });
+        }
+      });
   }, []);
 
   return (
@@ -83,13 +91,16 @@ export const Setting = () => {
               Input your interested areas that will help to draw better pictures
             </Subtitle>
 
-            <TextField
+            {/* <TextField
               type="text"
               placeholder="Interested areas"
               value={interestedArea}
               onChange={(e) => changeInterestingArea(e.target.value)}
-            />
+            /> */}
 
+            <Subtitle>
+              A generated account : <b> {accountAddr}</b>
+            </Subtitle>
             <Subtitle>
               Imort an existing acount private key if you want
             </Subtitle>

@@ -33,6 +33,8 @@ export class DB3Client {
 
   async createWordListDBAndCollection(): Promise<Collection | undefined> {
     const localAccount = await getLocalAccount();
+    console.log("start create db with account ", localAccount);
+
     if (localAccount) {
       const client = await this.initClient(localAccount.privateKey!);
       const { db } = await createDocumentDatabase(client, DB_DESCRIPTION);
@@ -40,7 +42,7 @@ export class DB3Client {
       chrome.storage.local.set({ DrawordDBAddress: db.addr });
       return col.collection;
     } else {
-      console.log("no local account");
+      console.log("create db but  no local account");
     }
   }
 
@@ -54,7 +56,6 @@ export class DB3Client {
     if (!this.wordListCollection) {
       const localAccount = await getLocalAccount();
       const localAddress = await this.getLocalDBAddress();
-      console.log("local account ,address", localAccount, localAddress);
 
       if (localAccount) {
         const cli = await this.initClient(localAccount.privateKey!);
@@ -66,7 +67,7 @@ export class DB3Client {
         );
         console.log("this.wordListCollection ", this.wordListCollection);
       } else {
-        console.log("no local account");
+        console.log("getWordListCollectionInstance but no local account");
       }
     }
     return this.wordListCollection;

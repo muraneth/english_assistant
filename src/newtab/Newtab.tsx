@@ -9,19 +9,18 @@ const Newtab = () => {
   const [records, setRecords] = useState(Array<DocumentData>);
   const [num, setNum] = useState(0);
 
-  const db3Client = new DB3Interface();
+  const db3Interface = new DB3Interface();
 
   useEffect(() => {
     async function loadData() {
-      await db3Client.init();
-      const re = await db3Client.getData();
+      const re = await db3Interface.getData();
       setRecords(re!);
     }
     loadData();
   }, []);
 
   const updateData = async (id: string, record: DocumentData) => {
-    await db3Client.updateData(id, record);
+    await db3Interface.updateData(id, record);
   };
 
   return (

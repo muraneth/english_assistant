@@ -2,11 +2,6 @@ import { Configuration, OpenAIApi } from "openai";
 import fetchAdapter from "@vespaiach/axios-fetch-adapter";
 import { DRAWORDS_OPENAI_KEY, OpenAiKey } from "../setting/setting";
 
-export type WordProps = {
-  word: string;
-  interestedArea?: string;
-  locale?: string;
-};
 type GPTExplaination = {
   sentence: string;
   pic_prompt: string;
@@ -35,22 +30,25 @@ export class ChatGPTClient {
     }
     return msg2;
   }
-  async askGPT(props: WordProps): Promise<GPTResponse | undefined> {
+  async askGPT(word: string): Promise<GPTResponse | undefined> {
     const openAiKey = await this.getOpenAiKey();
+    console.log("openAikye", openAiKey);
 
     if (!openAiKey) {
       return Promise.reject();
     }
     const msg1 = `You are excellent English teacher, every time I ask you about a new word or phrase, you can alway give me 
-    1.one example sentence better related to the area of ${props.interestedArea}  and 2.draw me a picture (prompt to generate the picture)  and  3.a brief explain about the word and 4.some similar words. Here is the word:${props.word}. 
+    1.one example sentence better related to the area of ${openAiKey.interestedArea}  and 2.draw me a picture (prompt to generate the picture)  and  3.a brief explain about the word and 4.some similar words. Here is the word:${word}. 
      Please return your answer in json with 4 keys [sentence , pic_prompt, explanation,similar_words]`;
     const msg2 = `You are excellent English teacher, every time I ask you about a new word or phrase, you can alway give me 
-     1.one example sentence and 2.generate a picture (or prompt to generate the picture) to describe the word and 3.a brief explain about the word and 4.some similar words. Here is the word:${props.word}. 
+     1.one example sentence and 2.generate a picture (or prompt to generate the picture) to describe the word and 3.a brief explain about the word and 4.some similar words. Here is the word:${word}. 
       Please return your answer in json with 4 keys [sentence , pic_prompt, explanation,similar_words]`;
 
-    const systemMessage = this.randomMessage(props.interestedArea, msg1, msg2);
-
-    console.log(systemMessage);
+    // const systemMessage = this.randomMessage(
+    //   openAiKey.interestedArea,
+    //   msg1,
+    //   msg2
+    // );
 
     const configuration = new Configuration({
       apiKey: openAiKey.openAIToken,
@@ -62,17 +60,16 @@ export class ChatGPTClient {
     const completion = await openai.createChatCompletion({
       stream: false,
       model: "gpt-3.5-turbo",
-      messages: [{ role: "system", content: systemMessage }],
+      messages: [{ role: "system", content: msg2 }],
     });
     const ct = completion.data.choices[0].message?.content;
-    console.log("gpt step1", ct);
 
     const re = JSON.parse(ct!) as GPTExplaination;
     const url = await this.generatePic(re.pic_prompt, openAiKey.openAIToken);
-    console.log("gpt done", url);
-    const img64 = await this.convert(url!);
 
-    return { ...re, pic_url: url, pic_64: img64 };
+    // const img64 = await this.convert(url!);
+
+    return { ...re, pic_url: url };
   }
 
   async generatePic(

@@ -3,6 +3,7 @@ import { Collection } from "db3.js/dist/store/types";
 import { useMemo } from "react";
 import { DB3Client } from "./db3_client";
 import { DocumentData } from "db3.js/dist/client/base";
+import { DRAWORDS_ACCOUNT } from "./account";
 
 const db3Client = new DB3Client();
 
@@ -10,11 +11,18 @@ export class DB3Interface {
   collection: Collection | undefined;
 
   async init() {
-    this.collection = await db3Client.getWordListCollectionInstance();
+    if (!this.collection) {
+      this.collection = await db3Client.getWordListCollectionInstance();
+      console.log("init collectin", this.collection);
+    }
   }
 
   async addData(doc: DocumentData) {
-    if (this.collection) await addDoc(this.collection, doc);
+    console.log("save word", doc);
+    if (this.collection)
+      addDoc(this.collection, doc).then((state) => {
+        console.log("saved: ", state);
+      });
   }
   async updateData(id: string, doc: DocumentData) {
     if (this.collection) await updateDoc(this.collection, id, doc);
@@ -37,11 +45,8 @@ export class DB3Interface {
   async getDataFromRemote(): Promise<Array<DocumentData> | undefined> {
     let collection = await db3Client.getWordListCollectionInstance();
     if (collection) {
-      const eak = await chrome.storage.local.get(["English_Assistant_Key"]);
-
-      const query = `/[addr = "${eak.English_Assistant_Key.address}"]`;
+      const query = `/*`;
       console.log("query=>", query);
-
       const result = await queryDoc(collection, query);
       let re = result.docs.map((element) => {
         return element.doc!;
