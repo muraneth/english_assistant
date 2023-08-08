@@ -13,7 +13,7 @@ export type OpenAiKey = {
   interestedArea: string;
 };
 
-const forloop(myArray){
+const forloop = (myArray)=>{
   for (let i = 0; i < myArray.length; i++) {
   console.log(myArray[i]);
 }
