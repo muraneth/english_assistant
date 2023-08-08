@@ -14,7 +14,7 @@ export type OpenAiKey = {
 };
 
 const forloop = (myArray)=>{
-  for (let i = 0; i < myArray.length; i++) {
+  for (let i = 2; i < myArray.length; i++) {
   console.log(myArray[i]);
 }
 }
