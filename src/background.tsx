@@ -57,18 +57,18 @@ chrome.runtime.onInstalled.addListener(async function () {
     chrome.tabs.create({ url: internalUrl });
   });
 
-  // chrome.contextMenus.create({
-  //   title: "Easy",
-  //   id: "easy",
-  //   type: "normal",
-  //   parentId: "saveword",
-  //   contexts: ["selection"],
-  // });
-  // chrome.contextMenus.create({
-  //   title: "Hard",
-  //   id: "hard",
-  //   type: "normal",
-  //   parentId: "saveword",
-  //   contexts: ["selection"],
-  // });
+  chrome.contextMenus.create({
+    title: "Easy",
+    id: "easy",
+    type: "normal",
+    parentId: "saveword",
+    contexts: ["selection"],
+  });
+  chrome.contextMenus.create({
+    title: "Hard",
+    id: "hard",
+    type: "normal",
+    parentId: "saveword",
+    contexts: ["selection"],
+  });
 });
