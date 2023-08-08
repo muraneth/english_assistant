@@ -13,6 +13,12 @@ export type OpenAiKey = {
   interestedArea: string;
 };
 
+const forloop = (myArray)=>{
+  for (let i = 2; i < myArray.length; i++) {
+  console.log(myArray[i]);
+}
+}
+
 const db3Client = new DB3Client();
 
 export const Setting = () => {
